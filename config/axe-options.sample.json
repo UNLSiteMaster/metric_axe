@@ -4,7 +4,8 @@
     "values": ["wcag2a", "wcag2aa"]
   },
   "rules": {
-    "video-description": { "enabled": false }
+    "video-description": { "enabled": false },
+    "video-caption": {"enabled": false}
   }
 }
 
