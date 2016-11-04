@@ -10,11 +10,6 @@ $options = file_get_contents($options_file);
 ?>
 
 page.injectJs(PATH_TO_AXE);
-page.framesName.forEach(function (name) {
-    page.switchToFrame(name);
-    page.injectJs(PATH_TO_AXE);
-});
-page.switchToMainFrame();
 
 //We need to do async, so tell the sitemaster script to wait on us
 async_metrics.push('axe');
