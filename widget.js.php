@@ -35,6 +35,15 @@ $options = file_get_contents($options_file);
     }
     
     function sitemaster_runAxe() {
+        //Notify user of how to use the tool
+        if(!localStorage.getItem('sitemaster_axe')) {
+            if (window.confirm("Thank you for using SiteMaster aXe. The page will now be tested and results can be found in your JavaScript console." +
+                    "\n\nPress okay to suppress this message on this site in the future.")) {
+                localStorage.setItem('sitemaster_axe', true);
+            }
+        }
+        
+        //Run axe
         console.log('Starting axe testing, this make take a few seconds...');
         
         var options = <?php echo $options ?>;
