@@ -18,6 +18,9 @@ page.evaluateAsync(function() {
     var axe_options = <?php echo $options ?>;
     
     axe.a11yCheck(window.document, axe_options, function (results) {
+        //We don't process the passed tests, so skip this as it can be a very huge array
+        results.passes = [];
+        
         var phantomResults = {};
         phantomResults.metric = 'axe';
         phantomResults.results = results;
