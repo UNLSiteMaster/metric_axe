@@ -14,6 +14,15 @@ page.injectJs(PATH_TO_AXE);
 //We need to do async, so tell the sitemaster script to wait on us
 async_metrics.push('axe');
 
+//set a timeout to prevent an error from stalling the script
+page.evaluateAsync(function() {
+  var phantomResults = {};
+  phantomResults.metric = 'axe';
+  phantomResults.results = {'exception': 'timeout'};
+  window.callPhantom(phantomResults);
+}, 35000);
+
+//run the normal tests
 page.evaluateAsync(function() {
     var axe_options = <?php echo $options ?>;
     
