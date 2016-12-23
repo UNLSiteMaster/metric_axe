@@ -1,7 +1,7 @@
 <?php
 namespace SiteMaster\Plugins\Metric_axe;
 
-use SiteMaster\Core\Auditor\PhantomjsRunner;
+use SiteMaster\Core\Auditor\HeadlessRunner;
 use SiteMaster\Core\Auditor\Scan;
 use SiteMaster\Core\Auditor\Site\Page;
 use SiteMaster\Core\DBTests\AbstractMetricDBTest;
@@ -10,7 +10,7 @@ use SiteMaster\Core\Registry\Site;
 class MetricDBTest extends AbstractMetricDBTest
 {
     /**
-     * A test to ensure that axe is working via phantomjs integration
+     * A test to ensure that axe is working via headless integration
      *
      * @test
      */
@@ -18,10 +18,10 @@ class MetricDBTest extends AbstractMetricDBTest
     {
         $this->setUpDB();
         
-        $phantomjs_runner = new PhantomjsRunner();
-        $phantomjs_runner->deleteCompliedScript();
+        $headless_runner = new HeadlessRunner();
+        $headless_runner->deleteCompliedScript();
         
-        $results = $phantomjs_runner->run(self::INTEGRATION_TESTING_URL);
+        $results = $headless_runner->run(self::INTEGRATION_TESTING_URL);
         
         $this->assertArrayHasKey('axe', $results);
     }

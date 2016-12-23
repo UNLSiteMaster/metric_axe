@@ -64,12 +64,12 @@ class Metric extends MetricInterface
      */
     public function scan($uri, \DOMXPath $xpath, $depth, Page $page, Metrics $context)
     {
-        if (!$this->phantomjs_results || isset($this->phantomjs_results['exception'])) {
+        if (!$this->headless_results || isset($this->headless_results['exception'])) {
             //mark this metric as incomplete
-            throw new RuntimeException('phantomjs results are required for the example program');
+            throw new RuntimeException('headless results are required for the axe metric');
         }
         
-        foreach ($this->phantomjs_results['violations'] as $violation) {
+        foreach ($this->headless_results as $violation) {
             $machine_name = 'axe_'.$violation['id'];
             
             $mark = $this->getMark($machine_name, $violation['help'], 1, '', $violation['description']);
