@@ -64,7 +64,7 @@ class Metric extends MetricInterface
      */
     public function scan($uri, \DOMXPath $xpath, $depth, Page $page, Metrics $context)
     {
-        if (!$this->headless_results || isset($this->headless_results['exception'])) {
+        if (false === $this->headless_results || isset($this->headless_results['exception'])) {
             //mark this metric as incomplete
             throw new RuntimeException('headless results are required for the axe metric');
         }
