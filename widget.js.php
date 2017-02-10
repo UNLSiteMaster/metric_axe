@@ -14,7 +14,7 @@ $options = file_get_contents($options_file);
 (function ()  {
     if (!($ = window.jQuery)) {
         var script = document.createElement( 'script' );
-        script.src = 'http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js';
+        script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js';
         script.onload=sitemaster_loadAxe;
         document.body.appendChild(script);
     }
