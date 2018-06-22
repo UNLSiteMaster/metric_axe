@@ -49,7 +49,7 @@ $options = file_get_contents($options_file);
         var options = <?php echo $options ?>;
         
         window.scrollTo(0,0); //Ensure we are at the top of the page
-        window.sitemaster_axe.a11yCheck(document, options, function (results) {
+        window.sitemaster_axe.run(document, options, function (err, results) {
             window.scrollTo(0,0); //Go back to the top of the page
             console.log('Finished! There were %s violations.', results.violations.length);
             if (results.violations.length == 0) {
@@ -62,6 +62,7 @@ $options = file_get_contents($options_file);
                         var error = {};
                         error.message = results.violations[violation].help;
                         error.description = results.violations[violation].description;
+                        error.helpUrl = results.violations[violation].helpUrl;
                         error.target = results.violations[violation].nodes[node].target[0];
                         error.node = $(error.target)[0];
                         error.all = results.violations[violation].nodes[node].all.concat(results.violations[violation].nodes[node].none);
@@ -89,6 +90,7 @@ $options = file_get_contents($options_file);
                 for (var error in report) {
                     var message = "Axe error: %s on node %o." +
                         "\n-"+report[error].description +
+                        "\n-Learn More: "+report[error].helpUrl +
                         "\n-Fix " + report[error].fix_type + " of ";
                     
                     for (fix in report[error].fix) {

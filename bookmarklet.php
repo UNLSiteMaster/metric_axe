@@ -9,6 +9,6 @@ $widget_url = \SiteMaster\Core\Config::get('URL') . 'plugins/metric_axe/widget.j
 
 <a href="javascript: (function () { 
     var jsCode = document.createElement('script'); 
-    jsCode.setAttribute('src', '<?php echo $widget_url ?>');                  
+    jsCode.setAttribute('src', '<?php echo $widget_url ?>');
   document.body.appendChild(jsCode); 
  }());">SiteMaster Axe</a>
