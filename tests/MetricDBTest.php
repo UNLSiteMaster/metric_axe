@@ -19,7 +19,7 @@ class MetricDBTest extends AbstractMetricDBTest
         $this->setUpDB();
         
         $headless_runner = new HeadlessRunner();
-        $headless_runner->deleteCompliedScript();
+        $headless_runner->deleteCompiledScript();
         
         $results = $headless_runner->run(self::INTEGRATION_TESTING_URL);
         
