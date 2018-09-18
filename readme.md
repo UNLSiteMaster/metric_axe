@@ -11,6 +11,18 @@ To install follow these steps
 2. install `axe-core` with npm in the `plugins/metric_axe` directory: `npm install axe-core`
 3. update sitemaster's config to include the `metric_axe` plugin
 4. if you want to customize the testing config, copy `plugins/metric_axe/config/axe-options.sample.json` to `plugins/metric_axe/config/axe-options.inc.json` and customize
+5. Add the following to the `Config::set('PLUGINS', ` array and customize as needed. This will make SiteMaster aware of the plugin but not apply it to any groups.
+```
+'metric_axe' => [
+  // 'weight' => 20, // Adjust weight if desired
+],
+```
+6. Add the following your group configuration under the `METRICS` key. This will enable it for the specified group. All metric configuration will override the defaults set in the `'PLUGINS'` array.
+```
+'metric_axe' => [
+  // 'weight' => 20, // Adjust weight if desired
+],
+```
 
 ## Testing
 
