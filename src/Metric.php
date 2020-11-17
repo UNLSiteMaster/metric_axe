@@ -1,16 +1,33 @@
 <?php
 namespace SiteMaster\Plugins\Metric_axe;
 
+use Monolog\Logger;
 use SiteMaster\Core\Auditor\Logger\Metrics;
 use SiteMaster\Core\Auditor\MetricInterface;
+use SiteMaster\Core\Config;
 use SiteMaster\Core\Exception;
 use SiteMaster\Core\Registry\Site;
 use SiteMaster\Core\Auditor\Scan;
 use SiteMaster\Core\Auditor\Site\Page;
 use SiteMaster\Core\RuntimeException;
+use SiteMaster\Core\Util;
 
 class Metric extends MetricInterface
 {
+    /**
+     * @param string $plugin_name
+     * @param array $options
+     */
+    public function __construct($plugin_name, array $options = array())
+    {
+        $options = array_replace_recursive([
+            'execute_as_user' => false,
+            'sandbox' => true,
+            'dark_mode' => false
+        ], $options);
+
+        parent::__construct($plugin_name, $options);
+    }
 
     /**
      * Get the human readable name of this metric
@@ -64,16 +81,16 @@ class Metric extends MetricInterface
      */
     public function scan($uri, \DOMXPath $xpath, $depth, Page $page, Metrics $context)
     {
-        if (false === $this->headless_results || isset($this->headless_results['exception'])) {
-            //mark this metric as incomplete
+        $results = $this->run($uri);
+        if (!is_array($results)) {
             throw new RuntimeException('headless results are required for the axe metric');
         }
-        
-        foreach ($this->headless_results as $violation) {
-            $machine_name = 'axe_'.$violation['id'];
-            
+
+        foreach ($results as $violation) {
+            $machine_name = $this->getMachineName().'_'.$violation['id'];
+
             $mark = $this->getMark($machine_name, $violation['help'], 1, '', $violation['description']);
-            
+
             foreach ($violation['nodes'] as $node) {
                 $page->addMark($mark, array(
                     'context'   => htmlentities($node['html']),
@@ -84,7 +101,44 @@ class Metric extends MetricInterface
 
         return true;
     }
-    
+
+    public function run($url) {
+        try {
+            $command = '';
+
+            if ($this->options['execute_as_user']) {
+                //This option allows executing as a specific user, which can sandbox the script.
+                $command .= 'sudo -u ' . escapeshellarg($this->options['execute_as_user']) . ' ';
+            }
+
+            $command .= 'timeout ' . escapeshellarg(Config::get('HEADLESS_TIMEOUT')) //Prevent excessively long runs
+                . ' ' . Config::get('PATH_NODE')
+                . ' ' . __DIR__.'/../check.js'
+                . ' --ua ' . escapeshellarg(Config::get('USER_AGENT'));
+
+            if (isset($this->options['sandbox']) && $this->options['sandbox'] === false) {
+                $command .= ' --sandbox=false';
+            }
+
+            if (isset($this->options['dark_mode']) && $this->options['dark_mode'] === true) {
+                $command .= ' --dark_mode=true';
+            }
+
+            $command .= ' ' . escapeshellarg($url);
+
+            $result = trim(shell_exec($command));
+
+            if (!$result) {
+                return false;
+            }
+
+            return json_decode($result, true);
+
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
     protected function getHelpTextMd($node) {
         $index = ['all', 'any'];
 

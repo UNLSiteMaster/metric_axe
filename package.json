@@ -1,6 +1,6 @@
 {
   "name": "metric-axe",
   "dependencies": {
-    "axe-core": "^3.5.5"
+    "axe-core": "^4.0.2"
   }
 }
