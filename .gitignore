@@ -1,3 +1,5 @@
 node_modules
 config/axe-options.inc.php
 custom-message.html
+.idea
+package-lock.json
