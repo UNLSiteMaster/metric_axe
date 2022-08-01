@@ -1,8 +1,8 @@
-# aXe Core
+# axe core
 
-This is an automated accessibility testing metric powered via [aXe core](https://github.com/dequelabs/axe-core) and phantomjs. It defaults to displaying only WCAG 2.0 A and AA errors.
+This is an automated accessibility testing metric powered via [axe core](https://github.com/dequelabs/axe-core) and phantomjs. It defaults to displaying only WCAG 2.0 A and AA errors.
 
-It also provides a bookmarklet for live testing. Normally aXe testing is accomplished via browser extensions, however because the browser extensions can be updated to a different version of the aXe core library than the version that SiteMaster is using, a bookmarklet is an easy way to ensure that the same exact tests are done live as they are done by SiteMaster.
+It also provides a bookmarklet for live testing. Normally axe testing is accomplished via browser extensions, however because the browser extensions can be updated to a different version of the axe core library than the version that SiteMaster is using, a bookmarklet is an easy way to ensure that the same exact tests are done live as they are done by SiteMaster.
 
 ## Install
 To install follow these steps (note: requires node.js >= v15)
