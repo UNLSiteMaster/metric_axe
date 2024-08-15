@@ -13,18 +13,51 @@ if (!fs.existsSync(path)) {
 }
 const axeOptions = JSON.parse(fs.readFileSync(path, 'utf8'));
 
+let chromeTmpDataDir = null;
+
 const getViolations = async (url, darkMode = false) => {
   try {
-    let options = {headless: "new"};
+    let options = {headless: "new",
+      args: [
+        '--aggressive-cache-discard',
+        '--disable-cache',
+        '--disable-application-cache',
+        '--disable-offline-load-stale-cache',
+        '--disable-gpu-shader-disk-cache',
+        '--media-cache-size=0',
+        '--disk-cache-size=0',
+        '--disable-extensions',
+        '--disable-component-extensions-with-background-pages',
+        '--disable-default-apps',
+        '--mute-audio',
+        '--no-default-browser-check',
+        '--autoplay-policy=user-gesture-required',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-notifications',
+        '--disable-background-networking',
+        '--disable-breakpad',
+        '--disable-component-update',
+        '--disable-domain-reliability',
+        '--disable-sync',
+      ]
+    };
     if (argv.sandbox === 'false') {
       options.args = ['--no-sandbox', '--disable-setuid-sandbox'];
     }
     const prefersColorScheme = darkMode === true ? 'dark' : 'light';
     const browser = await puppeteer.launch(options);
     const page = await browser.newPage();
-
+    await page.setCacheEnabled(false);
     if (argv.ua) {
       await page.setUserAgent(argv.ua);
+    }
+
+    let chromeSpawnArgs = browser.process().spawnargs;
+    for (let i = 0; i < chromeSpawnArgs.length; i++) {
+      if (chromeSpawnArgs[i].indexOf("--user-data-dir=") === 0) {
+        chromeTmpDataDir = chromeSpawnArgs[i].replace("--user-data-dir=", "");
+      }
     }
 
     await page.on('dialog', async dialog => {
@@ -52,9 +85,30 @@ const getViolations = async (url, darkMode = false) => {
   }
 };
 
+const deleteFolderRecursive = function(path) {
+  var files = [];
+  if( fs.existsSync(path) ) {
+      files = fs.readdirSync(path);
+      files.forEach(function(file,index){
+          var curPath = path + "/" + file;
+          if(fs.lstatSync(curPath).isDirectory()) { // recurse
+              deleteFolderRecursive(curPath);
+          } else { // delete file
+              fs.unlinkSync(curPath);
+          }
+      });
+      fs.rmdirSync(path);
+  }
+};
+
 (async () => {
   const violations = await getViolations(url, false);
   const darkModeContrastViolations = argv.dark_mode === 'true' ? await getViolations(url, true) : [];
+
+  if (chromeTmpDataDir != null) {
+    deleteFolderRecursive(chromeTmpDataDir);
+  }
+
   console.log(
     JSON.stringify(
       violations.concat(
