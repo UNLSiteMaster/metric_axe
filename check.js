@@ -15,7 +15,7 @@ const axeOptions = JSON.parse(fs.readFileSync(path, 'utf8'));
 
 const getViolations = async (url, darkMode = false) => {
   try {
-    let options = {headless: true};
+    let options = {headless: "new"};
     if (argv.sandbox === 'false') {
       options.args = ['--no-sandbox', '--disable-setuid-sandbox'];
     }
